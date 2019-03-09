@@ -39,13 +39,12 @@ $(document).ready(function () {
     let d;
     let playerAnswer;
     let time;
-    // variable for 30s interval countdown
     let questionTimer;
     let isTimerRunning = false;
-    // variable for timeout on question page
     let timerUp;
 
-    // sets and starts 30s timer on question page
+
+    // Timer functions
     function startQuestionTimer() {
         if (!isTimerRunning) {
             $("h1").text(30);
@@ -58,36 +57,23 @@ $(document).ready(function () {
     }
 
     function startTimerUp() {
-        // after 30s, time is out and go to answer page
         timerUp = setTimeout(function () {
             answerpage();
             stopQuestionTimer();
         }, 30 * 1000);
     }
 
-    // function to stop 30s question timer
     function stopQuestionTimer() {
         clearInterval(questionTimer);
         isTimerRunning = false;
     }
 
-    // At game start, name is in jumbotron, button is showing with Play & click advances to question page
-    // content has instructions (or empty? or picture?)
-    function gameStart() {
-        console.log("Ran gameStart");
-        correct = 0;
-        incorrect = 0;
-        questionArr = Object.getOwnPropertyNames(questions);
-        $(".answer").empty();
-        $("h1").text("Animal Trivia");
-        $("#start").text("Play Game").on("click", function () {
-            questionPage();
-        });
-        $("#content").html("<p>Press 'Play Game' to start.<br>You have 30 seconds to answer each question.</p>");
-        $(".answer").css("display", "none");
+    // Functions to generate questions and answers
+    function pickQuestion() {
+        currentQuestion = questionArr.splice(Math.floor(Math.random() * questionArr.length), 1);
+        $("#content").html("<p>" + questions[currentQuestion].ask + "</p>");
     }
 
-    // This function maps right and wrong answers to random a,b,c,&d variables
     function randomizeAnswers(q) {
         let answersArr = [];
         for (let i = 0; i < q.wrong.length; i++) {
@@ -100,44 +86,31 @@ $(document).ready(function () {
         d = answersArr.splice(Math.floor(Math.random() * answersArr.length), 1);
     }
 
-    // sets single random question object name to currentQuestion variable
-    function pickQuestion() {
-        console.log("Array of questions: " + questionArr);
-        currentQuestion = questionArr.splice(Math.floor(Math.random() * questionArr.length), 1);
-        $("#content").html("<p>" + questions[currentQuestion].ask + "</p>");
-        console.log("Current question: " + questions[currentQuestion].ask);
+    // Functions to progress through the game
+    function gameStart() {
+        correct = 0;
+        incorrect = 0;
+        questionArr = Object.getOwnPropertyNames(questions);
+        $("h1").text("Animal Trivia");
+        $("#start").css("display", "block").text("Play Game");
+        $("#reset").css("display", "none");
+        $("#content").html("<p>Press 'Play Game' to start.<br>You have 30 seconds to answer each question.</p>");
+        $(".answer").css("display", "none").empty();
     }
 
-    // question page has timer in jumbotron, question and answer buttons populate below that
     function questionPage() {
-        console.log("Ran questionPage");
         $("#start").css("display", "none");
         time = 30;
         if (questionArr.length > 0) {
-            // starts 30s timer
             startQuestionTimer();
-            // after 30s, time is out and go to answer page
             startTimerUp();
-            // picks random question from question array
             pickQuestion();
-            // makes answer array and randomly assigns to a,b,c,d
             randomizeAnswers(questions[currentQuestion]);
-            // populates buttons
             $(".answer").css("display", "block");
             $("#a").text(a);
             $("#b").text(b);
             $("#c").text(c);
             $("#d").text(d);
-            // moves to answer page when button clicked
-            $(".answer").on("click", function () {
-                answerpage();
-                // stop 30s timer & page time out
-                stopQuestionTimer();
-                clearTimeout(timerUp);
-                // need to save answer response in a variable
-                playerAnswer = $(this).text();
-                console.log("Player answer: " + playerAnswer);
-            });
         }
         else {
             finalPage();
@@ -146,13 +119,10 @@ $(document).ready(function () {
         }
     }
 
-    // answer page has correct/incorrect in jumbotron, button is hidden, content has correct answer
     function answerpage() {
-        console.log("Ran answerPage");
         clearTimeout(timerUp);
         stopQuestionTimer();
-        console.log("Current correct answer: " + questions[currentQuestion].answer);
-        if (playerAnswer === questions[currentQuestion].answer) {
+        if (playerAnswer == questions[currentQuestion].answer) {
             $("h1").text("Correct!");
             correct++;
         }
@@ -164,18 +134,27 @@ $(document).ready(function () {
         setTimeout(function () { questionPage() }, 3000);
     }
 
-    // final page has Finished in jumbotron, reset button that returns to game start, content shows number correct & incorrect
     function finalPage() {
-        console.log("Ran finalPage");
         $("h1").text("Finished!");
-        $("#start").css("display", "block").text("Reset").on("click", function () {
-            gameStart();
-        });
+        $("#reset").css("display", "block").text("Reset");
         $("#content").html("<p>Correct: " + correct + "<br>Incorrect: " + incorrect + "</p>");
-        $(".answer").empty();
-        $(".answer").css("display", "none");
+        $(".answer").css("display", "none").empty();
     }
 
-    gameStart();
+    // Event listeners
+    $(document).on("click", "#start", function () {
+        questionPage();
+    });
 
+    $(document).on("click", ".answer", function () {
+        playerAnswer = $(this).text();
+        answerpage();
+    });
+
+    $(document).on("click", "#reset", function () {
+        gameStart();
+    })
+
+    
+    gameStart();
 });
