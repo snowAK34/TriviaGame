@@ -1,0 +1,72 @@
+body {
+    background-color: #8D8741;
+    box-sizing: border-box;
+}
+
+.jumbotron, #middle-box {
+    border: solid 5px #DAAD86;
+    color: #FBEEC1;
+    border-radius: 15px;
+}
+
+.jumbotron {
+    background-color: #659DBD;
+    text-align: center;
+    font-family: 'Indie Flower', cursive;
+}
+
+#page-center {
+    display: flex;
+    justify-content: center;
+    font-family: 'Open Sans', sans-serif;
+}
+
+#middle-box {
+    background-color: #BC986A;
+    margin: 20px 10px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+#start, #reset, #a, #b, #c, #d {
+    color: #FBEEC1;
+    border: solid 2px #DAAD86;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+#start, #reset {
+    margin: auto;
+    background-color: #BC986A;
+}
+
+#a, #b, #c, #d {
+    margin: 5px;
+    background-color: #659DBD;
+}
+
+#start:active, #reset:active, #a:active, #b:active, #c:active, #d:active {
+    border-bottom: none;
+    transform: translateY(2px);
+}
+
+#start:focus, #reset:focus, #a:focus, #b:focus, #c:focus, #d:focus {
+    outline: none;
+}
+
+#start:hover, #reset:hover {
+    background-color: #af782f;
+}
+
+#a:hover, #b:hover, #c:hover, #d:hover {
+    background-color: #007dc5;
+}
+
+@media only screen and (max-width: 764px) {
+    #middle-box {
+        order: -1;
+    }
+}
+
